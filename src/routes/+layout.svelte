@@ -327,7 +327,7 @@
 	};
 
 	const chatEventHandler = async (event, cb) => {
-		const chat = $page.url.pathname.includes(`/c/${event.chat_id}`);
+		const chat = $page.url.pathname.includes(`/chat/c/${event.chat_id}`);
 
 		let isFocused = document.visibilityState !== 'visible';
 		if (window.electronAPI) {
@@ -370,7 +370,7 @@
 					toast.custom(NotificationToast, {
 						componentProps: {
 							onClick: () => {
-								goto(`/c/${event.chat_id}`);
+								goto(`/chat/c/${event.chat_id}`);
 							},
 							content: content,
 							title: title

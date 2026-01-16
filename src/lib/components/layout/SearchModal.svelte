@@ -370,14 +370,14 @@
 							idx + actions.length
 								? 'bg-gray-50 dark:bg-gray-850'
 								: ''}"
-							href="/c/{chat.id}"
+							href="/chat/c/{chat.id}"
 							draggable="false"
 							data-arrow-selected={selectedIdx === idx + actions.length ? 'true' : undefined}
 							on:mouseenter={() => {
 								selectedIdx = idx + actions.length;
 							}}
 							on:click={async () => {
-								await goto(`/c/${chat.id}`);
+								await goto(`/chat/c/${chat.id}`);
 								show = false;
 								onClose();
 							}}

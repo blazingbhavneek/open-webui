@@ -36,7 +36,7 @@
 			if (
 				url.origin === window.location.origin &&
 				(url.pathname.startsWith('/notes/') ||
-					url.pathname.startsWith('/c/') ||
+					url.pathname.startsWith('/chat/c/') ||
 					url.pathname.startsWith('/channels/'))
 			) {
 				e.preventDefault();

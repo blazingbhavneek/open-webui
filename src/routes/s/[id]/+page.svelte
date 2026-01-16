@@ -136,7 +136,7 @@
 		});
 
 		if (res) {
-			goto(`/c/${res.id}`);
+			goto(`/chat/c/${res.id}`);
 		}
 	};
 </script>

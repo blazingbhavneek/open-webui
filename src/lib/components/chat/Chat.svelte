@@ -994,7 +994,7 @@
 		await showOverview.set(false);
 		await showArtifacts.set(false);
 
-		if ($page.url.pathname.includes('/c/')) {
+		if ($page.url.pathname.includes('/chat/c/')) {
 			window.history.replaceState(history.state, '', `/`);
 		}
 
@@ -2297,7 +2297,7 @@
 			_chatId = chat.id;
 			await chatId.set(_chatId);
 
-			window.history.replaceState(history.state, '', `/c/${_chatId}`);
+			window.history.replaceState(history.state, '', `/chat/c/${_chatId}`);
 
 			await tick();
 
@@ -2487,7 +2487,7 @@
 									chatId.set(savedChat.id);
 									chats.set(await getChatList(localStorage.token, $currentChatPage));
 
-									await goto(`/c/${savedChat.id}`);
+									await goto(`/chat/c/${savedChat.id}`);
 									toast.success($i18n.t('Conversation saved successfully'));
 								}
 							} catch (error) {
