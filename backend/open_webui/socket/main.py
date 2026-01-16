@@ -72,7 +72,7 @@ if WEBSOCKET_MANAGER == "redis":
             WEBSOCKET_REDIS_URL, redis_options=WEBSOCKET_REDIS_OPTIONS
         )
     sio = socketio.AsyncServer(
-        cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
+        # cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
         async_mode="asgi",
         transports=(["websocket"] if ENABLE_WEBSOCKET_SUPPORT else ["polling"]),
         allow_upgrades=ENABLE_WEBSOCKET_SUPPORT,
@@ -82,10 +82,15 @@ if WEBSOCKET_MANAGER == "redis":
         ping_interval=WEBSOCKET_SERVER_PING_INTERVAL,
         ping_timeout=WEBSOCKET_SERVER_PING_TIMEOUT,
         engineio_logger=WEBSOCKET_SERVER_ENGINEIO_LOGGING,
+        cors_allowed_origins=[
+        "http://localhost:5173",
+        "http://10.193.125.182:5173"
+    ]
+
     )
 else:
     sio = socketio.AsyncServer(
-        cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
+        # cors_allowed_origins=SOCKETIO_CORS_ORIGINS,
         async_mode="asgi",
         transports=(["websocket"] if ENABLE_WEBSOCKET_SUPPORT else ["polling"]),
         allow_upgrades=ENABLE_WEBSOCKET_SUPPORT,
@@ -94,6 +99,11 @@ else:
         ping_interval=WEBSOCKET_SERVER_PING_INTERVAL,
         ping_timeout=WEBSOCKET_SERVER_PING_TIMEOUT,
         engineio_logger=WEBSOCKET_SERVER_ENGINEIO_LOGGING,
+        cors_allowed_origins=[
+        "http://localhost:5173",
+        "http://10.193.125.182:5173"
+    ]
+
     )
 
 
@@ -216,7 +226,7 @@ async def periodic_usage_pool_cleanup():
 
 app = socketio.ASGIApp(
     sio,
-    socketio_path="/ws/socket.io",
+    socketio_path="/chat/ws/socket.io",
 )
 
 
@@ -268,7 +278,7 @@ async def emit_to_users(event: str, data: dict, user_ids: list[str]):
     """
     try:
         for user_id in user_ids:
-            await sio.emit(event, data, room=f"user:{user_id}")
+            await sio.emit(event, data, room=f"user:{user_id}", namespace="/chat")
     except Exception as e:
         log.debug(f"Failed to emit event {event} to users {user_ids}: {e}")
 
@@ -284,12 +294,12 @@ async def enter_room_for_users(room: str, user_ids: list[str]):
         for user_id in user_ids:
             session_ids = get_session_ids_from_room(f"user:{user_id}")
             for sid in session_ids:
-                await sio.enter_room(sid, room)
+                await sio.enter_room(sid, room, namespace="/chat")
     except Exception as e:
         log.debug(f"Failed to make users {user_ids} join room {room}: {e}")
 
 
-@sio.on("usage")
+@sio.on("usage", namespace="/chat")
 async def usage(sid, data):
     if sid in SESSION_POOL:
         model_id = data["model"]
@@ -303,7 +313,7 @@ async def usage(sid, data):
         }
 
 
-@sio.event
+@sio.event(namespace="/chat") 
 async def connect(sid, environ, auth):
     user = None
     if auth and "token" in auth:
@@ -316,10 +326,10 @@ async def connect(sid, environ, auth):
             SESSION_POOL[sid] = user.model_dump(
                 exclude=["date_of_birth", "bio", "gender"]
             )
-            await sio.enter_room(sid, f"user:{user.id}")
+            await sio.enter_room(sid, f"user:{user.id}", namespace="/chat")
 
 
-@sio.on("user-join")
+@sio.on("user-join", namespace="/chat")
 async def user_join(sid, data):
 
     auth = data["auth"] if "auth" in data else None
@@ -344,25 +354,25 @@ async def user_join(sid, data):
         ]
     )
 
-    await sio.enter_room(sid, f"user:{user.id}")
+    await sio.enter_room(sid, f"user:{user.id}", namespace="/chat")
 
     # Join all the channels
     channels = Channels.get_channels_by_user_id(user.id)
     log.debug(f"{channels=}")
     for channel in channels:
-        await sio.enter_room(sid, f"channel:{channel.id}")
+        await sio.enter_room(sid, f"channel:{channel.id}", namespace="/chat")
 
     return {"id": user.id, "name": user.name}
 
 
-@sio.on("heartbeat")
+@sio.on("heartbeat", namespace="/chat")
 async def heartbeat(sid, data):
     user = SESSION_POOL.get(sid)
     if user:
         Users.update_last_active_by_id(user["id"])
 
 
-@sio.on("join-channels")
+@sio.on("join-channels", namespace="/chat")
 async def join_channel(sid, data):
     auth = data["auth"] if "auth" in data else None
     if not auth or "token" not in auth:
@@ -380,10 +390,10 @@ async def join_channel(sid, data):
     channels = Channels.get_channels_by_user_id(user.id)
     log.debug(f"{channels=}")
     for channel in channels:
-        await sio.enter_room(sid, f"channel:{channel.id}")
+        await sio.enter_room(sid, f"channel:{channel.id}", namespace="/chat")
 
 
-@sio.on("join-note")
+@sio.on("join-note", namespace="/chat")
 async def join_note(sid, data):
     auth = data["auth"] if "auth" in data else None
     if not auth or "token" not in auth:
@@ -411,10 +421,10 @@ async def join_note(sid, data):
         return
 
     log.debug(f"Joining note {note.id} for user {user.id}")
-    await sio.enter_room(sid, f"note:{note.id}")
+    await sio.enter_room(sid, f"note:{note.id}", namespace="/chat")
 
 
-@sio.on("events:channel")
+@sio.on("events:channel", namespace="/chat")
 async def channel_events(sid, data):
     room = f"channel:{data['channel_id']}"
     participants = sio.manager.get_participants(
@@ -444,12 +454,13 @@ async def channel_events(sid, data):
                 "user": UserNameResponse(**user).model_dump(),
             },
             room=room,
+            namespace="/chat",
         )
     elif event_type == "last_read_at":
         Channels.update_member_last_read_at(data["channel_id"], user["id"])
 
 
-@sio.on("ydoc:document:join")
+@sio.on("ydoc:document:join", namespace="/chat")
 async def ydoc_document_join(sid, data):
     """Handle user joining a document"""
     user = SESSION_POOL.get(sid)
@@ -484,7 +495,7 @@ async def ydoc_document_join(sid, data):
         await YDOC_MANAGER.add_user(document_id=document_id, user_id=sid)
 
         # Join Socket.IO room
-        await sio.enter_room(sid, f"doc_{document_id}")
+        await sio.enter_room(sid, f"doc_{document_id}", namespace="/chat")
 
         active_session_ids = get_session_ids_from_room(f"doc_{document_id}")
 
@@ -504,6 +515,7 @@ async def ydoc_document_join(sid, data):
                 "sessions": active_session_ids,
             },
             room=sid,
+            namespace="/chat",
         )
 
         # Notify other users about the new user
@@ -517,13 +529,14 @@ async def ydoc_document_join(sid, data):
             },
             room=f"doc_{document_id}",
             skip_sid=sid,
+            namespace="/chat",
         )
 
         log.info(f"User {user_id} successfully joined document {document_id}")
 
     except Exception as e:
         log.error(f"Error in yjs_document_join: {e}")
-        await sio.emit("error", {"message": "Failed to join document"}, room=sid)
+        await sio.emit("error", {"message": "Failed to join document"}, room=sid, namespace="/chat")
 
 
 async def document_save_handler(document_id, data, user):
@@ -547,7 +560,7 @@ async def document_save_handler(document_id, data, user):
         Notes.update_note_by_id(note_id, NoteUpdateForm(data=data))
 
 
-@sio.on("ydoc:document:state")
+@sio.on("ydoc:document:state", namespace="/chat")
 async def yjs_document_state(sid, data):
     """Send the current state of the Yjs document to the user"""
     try:
@@ -586,7 +599,7 @@ async def yjs_document_state(sid, data):
         log.error(f"Error in yjs_document_state: {e}")
 
 
-@sio.on("ydoc:document:update")
+@sio.on("ydoc:document:update", namespace="/chat")
 async def yjs_document_update(sid, data):
     """Handle Yjs document updates"""
     try:
@@ -617,6 +630,7 @@ async def yjs_document_update(sid, data):
             },
             room=f"doc_{document_id}",
             skip_sid=sid,
+            namespace="/chat",
         )
 
         async def debounced_save():
@@ -632,7 +646,7 @@ async def yjs_document_update(sid, data):
         log.error(f"Error in yjs_document_update: {e}")
 
 
-@sio.on("ydoc:document:leave")
+@sio.on("ydoc:document:leave", namespace="/chat")
 async def yjs_document_leave(sid, data):
     """Handle user leaving a document"""
     try:
@@ -645,13 +659,14 @@ async def yjs_document_leave(sid, data):
         await YDOC_MANAGER.remove_user(document_id=document_id, user_id=sid)
 
         # Leave Socket.IO room
-        await sio.leave_room(sid, f"doc_{document_id}")
+        await sio.leave_room(sid, f"doc_{document_id}", namespace="/chat")
 
         # Notify other users
         await sio.emit(
             "ydoc:user:left",
             {"document_id": document_id, "user_id": user_id},
             room=f"doc_{document_id}",
+            namespace="/chat",
         )
 
         if (
@@ -665,7 +680,7 @@ async def yjs_document_leave(sid, data):
         log.error(f"Error in yjs_document_leave: {e}")
 
 
-@sio.on("ydoc:awareness:update")
+@sio.on("ydoc:awareness:update", namespace="/chat")
 async def yjs_awareness_update(sid, data):
     """Handle awareness updates (cursors, selections, etc.)"""
     try:
@@ -679,13 +694,14 @@ async def yjs_awareness_update(sid, data):
             {"document_id": document_id, "user_id": user_id, "update": update},
             room=f"doc_{document_id}",
             skip_sid=sid,
+            namespace="/chat",
         )
 
     except Exception as e:
         log.error(f"Error in yjs_awareness_update: {e}")
 
 
-@sio.event
+@sio.event(namespace="/chat") 
 async def disconnect(sid):
     if sid in SESSION_POOL:
         user = SESSION_POOL[sid]
@@ -710,6 +726,7 @@ def get_event_emitter(request_info, update_db=True):
                 "data": event_data,
             },
             room=f"user:{user_id}",
+            namespace="/chat",
         )
         if (
             update_db
@@ -826,6 +843,7 @@ def get_event_call(request_info):
                 "data": event_data,
             },
             to=request_info["session_id"],
+            namespace="/chat",
         )
         return response
 

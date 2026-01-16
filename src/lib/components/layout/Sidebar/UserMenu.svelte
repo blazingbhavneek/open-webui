@@ -3,7 +3,7 @@
 	import { createEventDispatcher, getContext, onMount, tick } from 'svelte';
 
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { fade, slide } from 'svelte/transition';
 
 	import { getUsage } from '$lib/apis';

@@ -15,7 +15,7 @@
 	import { createMessagesList } from '$lib/utils';
 	import { config, user } from '$lib/stores';
 	import Messages from '../chat/Messages.svelte';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import PageEdit from '../icons/PageEdit.svelte';
 	dayjs.extend(calendar);

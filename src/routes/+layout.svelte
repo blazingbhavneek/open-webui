@@ -32,7 +32,7 @@
 		channels,
 		channelId
 	} from '$lib/stores';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { page } from '$app/stores';
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
@@ -104,7 +104,7 @@
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
 			randomizationFactor: 0.5,
-			path: '/ws/socket.io',
+			path: '/chat/ws/socket.io',
 			transports: enableWebsocket ? ['websocket'] : ['polling', 'websocket'],
 			auth: { token: localStorage.token }
 		});

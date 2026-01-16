@@ -657,6 +657,7 @@ app = FastAPI(
     openapi_url="/openapi.json" if ENV == "dev" else None,
     redoc_url=None,
     lifespan=lifespan,
+    root_path="/chat"
 )
 
 # For Open WebUI OIDC/OAuth2
@@ -1394,7 +1395,10 @@ async def inspect_websocket(request: Request, call_next):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ALLOW_ORIGIN,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://10.193.125.182:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
