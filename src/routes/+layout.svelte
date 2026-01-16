@@ -861,7 +861,7 @@
 		rel="search"
 		type="application/opensearchdescription+xml"
 		title={$WEBUI_NAME}
-		href="/opensearch.xml"
+		href="/chat/opensearch.xml"
 		crossorigin="use-credentials"
 	/>
 </svelte:head>
