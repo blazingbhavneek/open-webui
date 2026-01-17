@@ -826,23 +826,24 @@ load_oauth_providers()
 # Static DIR
 ####################################
 
-STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "static")).resolve()
+STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "rikiseisan"  / "static")).resolve()
 
 try:
     if STATIC_DIR.exists():
         for item in STATIC_DIR.iterdir():
             if item.is_file() or item.is_symlink():
                 try:
-                    item.unlink()
+                    pass
+                    # item.unlink()
                 except Exception as e:
                     pass
 except Exception as e:
     pass
 
-for file_path in (FRONTEND_BUILD_DIR / "static").glob("**/*"):
+for file_path in (FRONTEND_BUILD_DIR / "rikiseisan"  / "static").glob("**/*"):
     if file_path.is_file():
         target_path = STATIC_DIR / file_path.relative_to(
-            (FRONTEND_BUILD_DIR / "static")
+            (FRONTEND_BUILD_DIR / "rikiseisan"  / "static")
         )
         target_path.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -850,7 +851,7 @@ for file_path in (FRONTEND_BUILD_DIR / "static").glob("**/*"):
         except Exception as e:
             logging.error(f"An error occurred: {e}")
 
-frontend_favicon = FRONTEND_BUILD_DIR / "static" / "favicon.png"
+frontend_favicon = FRONTEND_BUILD_DIR / "rikiseisan"  / "static" / "favicon.png"
 
 if frontend_favicon.exists():
     try:
@@ -858,7 +859,7 @@ if frontend_favicon.exists():
     except Exception as e:
         logging.error(f"An error occurred: {e}")
 
-frontend_splash = FRONTEND_BUILD_DIR / "static" / "splash.png"
+frontend_splash = FRONTEND_BUILD_DIR / "rikiseisan"  / "static" / "splash.png"
 
 if frontend_splash.exists():
     try:
@@ -866,7 +867,7 @@ if frontend_splash.exists():
     except Exception as e:
         logging.error(f"An error occurred: {e}")
 
-frontend_loader = FRONTEND_BUILD_DIR / "static" / "loader.js"
+frontend_loader = FRONTEND_BUILD_DIR / "rikiseisan"  / "static" / "loader.js"
 
 if frontend_loader.exists():
     try:
