@@ -1395,10 +1395,7 @@ async def inspect_websocket(request: Request, call_next):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://10.193.125.182:5173"
-    ],
+    allow_origin_regex="http?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

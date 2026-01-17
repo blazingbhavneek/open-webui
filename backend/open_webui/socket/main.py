@@ -82,10 +82,7 @@ if WEBSOCKET_MANAGER == "redis":
         ping_interval=WEBSOCKET_SERVER_PING_INTERVAL,
         ping_timeout=WEBSOCKET_SERVER_PING_TIMEOUT,
         engineio_logger=WEBSOCKET_SERVER_ENGINEIO_LOGGING,
-        cors_allowed_origins=[
-        "http://localhost:5173",
-        "http://10.193.125.182:5173"
-    ]
+        allow_origin_regex="http?://.*",
 
     )
 else:
@@ -99,10 +96,7 @@ else:
         ping_interval=WEBSOCKET_SERVER_PING_INTERVAL,
         ping_timeout=WEBSOCKET_SERVER_PING_TIMEOUT,
         engineio_logger=WEBSOCKET_SERVER_ENGINEIO_LOGGING,
-        cors_allowed_origins=[
-        "http://localhost:5173",
-        "http://10.193.125.182:5173"
-    ]
+        allow_origin_regex="http?://.*",
 
     )
 
