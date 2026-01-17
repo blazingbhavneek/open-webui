@@ -8,7 +8,7 @@
 
 	import { WEBUI_NAME, config, prompts, tools as _tools, user } from '$lib/stores';
 
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import {
 		createNewTool,
 		loadToolByUrl,
@@ -289,7 +289,7 @@
 				{:else}
 					<a
 						class=" px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
-						href="/workspace/tools/create"
+						href="/rikiseisan/workspace/tools/create"
 					>
 						<Plus className="size-3" strokeWidth="2.5" />
 

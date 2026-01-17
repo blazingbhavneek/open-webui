@@ -3,7 +3,7 @@
 	import fileSaver from 'file-saver';
 	const { saveAs } = fileSaver;
 
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { onMount, getContext, tick } from 'svelte';
 	import { WEBUI_NAME, config, prompts as _prompts, user } from '$lib/stores';
 
@@ -256,7 +256,7 @@
 				{/if}
 				<a
 					class=" px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
-					href="/workspace/prompts/create"
+					href="/rikiseisan/workspace/prompts/create"
 				>
 					<Plus className="size-3" strokeWidth="2.5" />
 

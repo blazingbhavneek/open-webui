@@ -4,7 +4,7 @@
 
 	import type { Token } from 'marked';
 	import { getContext } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 
 	const i18n = getContext('i18n');
 
@@ -36,7 +36,7 @@
 			if (
 				url.origin === window.location.origin &&
 				(url.pathname.startsWith('/notes/') ||
-					url.pathname.startsWith('/c/') ||
+					url.pathname.startsWith('/rikiseisan/c/') ||
 					url.pathname.startsWith('/channels/'))
 			) {
 				e.preventDefault();

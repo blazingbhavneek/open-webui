@@ -3,7 +3,7 @@
 	import { createEventDispatcher, getContext, onMount, tick } from 'svelte';
 
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { fade, slide } from 'svelte/transition';
 
 	import { getUsage } from '$lib/apis';
@@ -245,7 +245,7 @@
 			{#if role === 'admin'}
 				<DropdownMenu.Item
 					as="a"
-					href="/playground"
+					href="/rikiseisan/playground"
 					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition select-none"
 					on:click={async () => {
 						show = false;
@@ -262,7 +262,7 @@
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
 					as="a"
-					href="/admin"
+					href="/rikiseisan/admin"
 					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition select-none"
 					on:click={async () => {
 						show = false;

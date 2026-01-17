@@ -32,7 +32,7 @@
 		channels,
 		channelId
 	} from '$lib/stores';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { page } from '$app/stores';
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
@@ -104,7 +104,7 @@
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
 			randomizationFactor: 0.5,
-			path: '/ws/socket.io',
+			path: '/rikiseisan/ws/socket.io',
 			transports: enableWebsocket ? ['websocket'] : ['polling', 'websocket'],
 			auth: { token: localStorage.token }
 		});
@@ -327,7 +327,7 @@
 	};
 
 	const chatEventHandler = async (event, cb) => {
-		const chat = $page.url.pathname.includes(`/c/${event.chat_id}`);
+		const chat = $page.url.pathname.includes(`/rikiseisan/c/${event.chat_id}`);
 
 		let isFocused = document.visibilityState !== 'visible';
 		if (window.electronAPI) {
@@ -370,7 +370,7 @@
 					toast.custom(NotificationToast, {
 						componentProps: {
 							onClick: () => {
-								goto(`/c/${event.chat_id}`);
+								goto(`/rikiseisan/c/${event.chat_id}`);
 							},
 							content: content,
 							title: title
@@ -861,7 +861,7 @@
 		rel="search"
 		type="application/opensearchdescription+xml"
 		title={$WEBUI_NAME}
-		href="/opensearch.xml"
+		href="/rikiseisan/opensearch.xml"
 		crossorigin="use-credentials"
 	/>
 </svelte:head>
