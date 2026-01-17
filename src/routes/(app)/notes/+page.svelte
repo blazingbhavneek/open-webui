@@ -5,7 +5,7 @@
 
 	import dayjs from '$lib/dayjs';
 	import { mobile, showArchivedChats, showSidebar, user } from '$lib/stores';
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { page } from '$app/stores';
 
 	import { createNoteHandler } from '$lib/components/notes/utils';
@@ -72,7 +72,7 @@
 						<div
 							class="flex gap-1 scrollbar-none overflow-x-auto w-fit text-center text-sm font-medium bg-transparent py-1 touch-auto pointer-events-auto"
 						>
-							<a class="min-w-fit transition" href="/notes">
+							<a class="min-w-fit transition" href="/rikiseisan/notes">
 								{$i18n.t('Notes')}
 							</a>
 						</div>

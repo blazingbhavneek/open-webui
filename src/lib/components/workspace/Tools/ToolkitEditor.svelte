@@ -3,7 +3,7 @@
 
 	const i18n = getContext('i18n');
 
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { user } from '$lib/stores';
 
 	import CodeEditor from '$lib/components/common/CodeEditor.svelte';

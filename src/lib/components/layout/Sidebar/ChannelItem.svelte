@@ -63,7 +63,7 @@
 >
 	<a
 		class=" w-full flex justify-between"
-		href="/channels/{channel.id}"
+		href="/rikiseisan/channels/{channel.id}"
 		on:click={() => {
 			console.log(channel);
 

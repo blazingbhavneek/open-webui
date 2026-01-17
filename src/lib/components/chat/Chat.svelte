@@ -7,7 +7,7 @@
 	import { fade } from 'svelte/transition';
 	const i18n: Writable<i18nType> = getContext('i18n');
 
-	import { goto } from '$app/navigation';
+	import { goto} from '$lib/navigation';
 	import { page } from '$app/stores';
 
 	import { get, type Unsubscriber, type Writable } from 'svelte/store';
@@ -994,7 +994,7 @@
 		await showOverview.set(false);
 		await showArtifacts.set(false);
 
-		if ($page.url.pathname.includes('/c/')) {
+		if ($page.url.pathname.includes('/rikiseisan/c/')) {
 			window.history.replaceState(history.state, '', `/`);
 		}
 
@@ -2297,7 +2297,7 @@
 			_chatId = chat.id;
 			await chatId.set(_chatId);
 
-			window.history.replaceState(history.state, '', `/c/${_chatId}`);
+			window.history.replaceState(history.state, '', `/rikiseisan/c/${_chatId}`);
 
 			await tick();
 
@@ -2487,7 +2487,7 @@
 									chatId.set(savedChat.id);
 									chats.set(await getChatList(localStorage.token, $currentChatPage));
 
-									await goto(`/c/${savedChat.id}`);
+									await goto(`/rikiseisan/c/${savedChat.id}`);
 									toast.success($i18n.t('Conversation saved successfully'));
 								}
 							} catch (error) {
